@@ -156,8 +156,54 @@ PS C:\Users\MateusMagalhães\Desktop\Mateus\DevOps\TP_Integrador_Kit_Formandos> 
 ## E06 - Jenkins SUCCESS (4 valores)
 URL/numero do build, etapas e identificador da imagem construida:
 
+## E06 - Jenkins SUCCESS (4 valores)
+URL/numero do build, etapas e identificador da imagem construida:
+
+- Job: tp-integrador-MateusMagalhaes
+- Repositorio: https://github.com/K4MIS4MA/tp-integrador
+- Build: #1 - http://localhost:8080/job/tp-integrador-MateusMagalhaes/1/
+- Etapas: Checkout SUCCESS | Tests SUCCESS (2 passed) | Docker Build SUCCESS
+- Imagem: natixis-support:ci-1
+- ID da imagem (docker image inspect): sha256:35922b49635a856b8481708e609f1b36c0c9a81cb03313a048fdb3144964776c
+- Captura: evidencias/SucessJenkins.png
+
+Console Output JOB 1:
+
+Running on ci-python-docker
+Checking out Revision 6ab00d8df2bd977c6f370fd579aba77d79df2c91 (refs/remotes/origin/main)
++ .venv/bin/python -m pytest -q
+2 passed, 1 warning in 0.79s
++ docker build -t natixis-support:ci-1 .
+Successfully tagged natixis-support:ci-1
++ docker image inspect natixis-support:ci-1 --format {{.Id}}
+sha256:35922b49635a856b8481708e609f1b36c0c9a81cb03313a048fdb3144964776c
+Finished: SUCCESS
+
+
+A pipeline obtem o codigo do Git (Checkout), corre os testes num venv isolado no agente ci-python-docker e depois constroi a imagem com uma tag unica por execucao (ci-${BUILD_NUMBER}= ci-1), confirmada com docker image inspect.
+
 ## E07 - Jenkins FAILURE e recuperacao (2 valores)
 Build FAILURE, etapa que falhou e excerto relevante do log; build SUCCESS apos correcao:
+
+Como mudei o assert response.json()["status"] para offline, o job agora vai dar failure. 
+
+Console output Jenkins JOB 2: 
+[...]
+FAILED tests/test_app.py::test_health - AssertionError: assert 'ok' == 'offline'
+[...]
+ERROR: script returned exit code 1
+Finished: FAILURE
+
+Para voltar a coorer bem o job basta mudar o assert response.json()["status"] (que se encontra em tests/test_app.py) para ok e dar commit para o github. 
+Console output Jenkins JOB 3: 
+Successfully built 35922b49635a
+Successfully tagged natixis-support:ci-3
++ docker image inspect natixis-support:ci-3 --format {{.Id}}
+sha256:35922b49635a856b8481708e609f1b36c0c9a81cb03313a048fdb3144964776c
+Finished: SUCCESS
+
+A assercao alterada esperava status="offline" mas a API devolve "ok", por isso o pytest falhou e a pipeline parou na etapa Tests, impedindo a construcao de uma imagem com testes a falhar. Depois de repor o assert, o build voltou a SUCCESS.
+
 
 ## Verificacao final
 [ ] Dockerfile [ ] compose.yaml [ ] app.py [ ] tests/ [ ] Jenkinsfile
