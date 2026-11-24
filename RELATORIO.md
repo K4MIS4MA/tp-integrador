@@ -133,6 +133,26 @@ O contador manteve o valor anterior porque o volume "app-data" nao foi removido 
 ## E05 - Git (3 valores)
 Branch, hashes de commits, merge e tag v1.0.0:
 
+PS C:\Users\MateusMagalhães\Desktop\Mateus\DevOps\TP_Integrador_Kit_Formandos> git switch -c fix/health-info
+Switched to a new branch 'fix/health-info'
+PS C:\Users\MateusMagalhães\Desktop\Mateus\DevOps\TP_Integrador_Kit_Formandos> git commit -m "fix: acrescentar identificacao no health"
+[fix/health-info 3fa2f76] fix: acrescentar identificacao no health
+ 2 files changed, 3 insertions(+), 1 deletion(-)
+PS C:\Users\MateusMagalhães\Desktop\Mateus\DevOps\TP_Integrador_Kit_Formandos> git switch main
+Switched to branch 'main'
+PS C:\Users\MateusMagalhães\Desktop\Mateus\DevOps\TP_Integrador_Kit_Formandos> git merge --no-ff fix/health-info -m "merge: integrar fix/health-info"
+Merge made by the 'ort' strategy.
+ app.py            | 3 ++-
+ tests/test_app.py | 1 +
+ 2 files changed, 3 insertions(+), 1 deletion(-)
+PS C:\Users\MateusMagalhães\Desktop\Mateus\DevOps\TP_Integrador_Kit_Formandos> git tag -a v1.0.0 -m "Release integrador 1.0.0"
+PS C:\Users\MateusMagalhães\Desktop\Mateus\DevOps\TP_Integrador_Kit_Formandos> git log --oneline --graph --decorate -6
+*   fd5f4d7 (HEAD -> main, tag: v1.0.0) merge: integrar fix/health-info
+|\  
+| * 3fa2f76 (fix/health-info) fix: acrescentar identificacao no health
+|/  
+* 5d6a4ab feat: ambiente integrador funcional
+
 ## E06 - Jenkins SUCCESS (4 valores)
 URL/numero do build, etapas e identificador da imagem construida:
 
