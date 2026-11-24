@@ -1,7 +1,7 @@
 # Relatorio de evidencias - Trabalho Pratico Integrador 01-06
 
 Nome: Mateus Pinto Magalhães  Data: 24/11/2026
-URL do repositorio Git: ____________________________
+URL do repositorio Git: https://github.com/K4MIS4MA/tp-integrador
 
 ## E01 - Ambiente (1 valor)
 Comandos e versoes observadas:
@@ -107,12 +107,12 @@ target: 8000
 [...]
 PS C:\Users\MateusMagalhães\Desktop\Mateus\DevOps\TP_Integrador_Kit_Formandos> docker inspect --format "{{json .State.Health}}" natixis-integrador-api-1
 {"Status":"unhealthy"}[...]
-
-O overlay póe o unicorn na porta 8001 mas o mapeaomento passa pela porta 8000 e o healthcheck como usa a porta 8000 e não está la nada dá erro.  
-
-## CORREÇÃO: 
 PS C:\Users\MateusMagalhães\Desktop\Mateus\DevOps\TP_Integrador_Kit_Formandos> docker compose -f compose.yaml -f incidente.yaml exec api python -c "import urllib.request;print(urllib.request.urlopen('http://127.0.0.1:8001/health').read())"
 b'{"status":"ok","service":"support-api-integrador","version":"1.0"}'
+
+O overlay póe o uvicorn na porta 8001 mas o mapeaomento passa pela porta 8000 e o healthcheck como usa a porta 8000 e não está la nada dá erro.  
+
+## CORREÇÃO: 
 PS C:\Users\MateusMagalhães\Desktop\Mateus\DevOps\TP_Integrador_Kit_Formandos> docker compose up -d --force-recreate api
 [+] up 1/1
  ✔ Container natixis-integrador-api-1 Started                                                                                                                                                                         3.7s
@@ -153,8 +153,17 @@ PS C:\Users\MateusMagalhães\Desktop\Mateus\DevOps\TP_Integrador_Kit_Formandos> 
 |/  
 * 5d6a4ab feat: ambiente integrador funcional
 
-## E06 - Jenkins SUCCESS (4 valores)
-URL/numero do build, etapas e identificador da imagem construida:
+PS C:\Users\MateusMagalhães\Desktop\Mateus\DevOps\TP_Integrador_Kit_Formandos> git push -u origin main
+PS C:\Users\MateusMagalhães\Desktop\Mateus\DevOps\TP_Integrador_Kit_Formandos> git push origin v1.0.0
+PS C:\Users\MateusMagalhães\Desktop\Mateus\DevOps\TP_Integrador_Kit_Formandos> git push origin fix/health-info
+
+- Branch: fix/health-info
+- Commit inicial: 5d6a4ab - feat: ambiente integrador funcional
+- Commit da correcao: 3fa2f76 - fix: acrescentar identificacao no health
+- Merge: fd5f4d7 - merge: integrar fix/health-info ("Merge made by the 'ort' strategy", --no-ff)
+- Tag : v1.0.0 ("Release integrador 1.0.0"), publicada no remoto
+
+A alteracao foi feita numa branch isolada, testada (pytest: 2 passed com a nova assercao team == "support"), integrada na main e marcada com a tag v1.0.0, ambas publicadas no GitHub.
 
 ## E06 - Jenkins SUCCESS (4 valores)
 URL/numero do build, etapas e identificador da imagem construida:
@@ -165,7 +174,7 @@ URL/numero do build, etapas e identificador da imagem construida:
 - Etapas: Checkout SUCCESS | Tests SUCCESS (2 passed) | Docker Build SUCCESS
 - Imagem: natixis-support:ci-1
 - ID da imagem (docker image inspect): sha256:35922b49635a856b8481708e609f1b36c0c9a81cb03313a048fdb3144964776c
-- Captura: evidencias/SucessJenkins.png
+- Captura: evidencias/SUCESSJenkinsJob1.png
 
 Console Output JOB 1:
 
@@ -194,8 +203,17 @@ FAILED tests/test_app.py::test_health - AssertionError: assert 'ok' == 'offline'
 ERROR: script returned exit code 1
 Finished: FAILURE
 
-Para voltar a coorer bem o job basta mudar o assert response.json()["status"] (que se encontra em tests/test_app.py) para ok e dar commit para o github. 
+- Build FAILURE: #2 - http://localhost:8080/job/tp-integrador-MateusMagalhaes/2/
+- Commit: 4c4eed5 - test: falha controlada - esperar status offline
+- Etapa que falhou: Tests. A etapa Docker Build nao foi executada (skipped).
+
+Para voltar a correr bem o job basta mudar o assert response.json()["status"] (que se encontra em tests/test_app.py) para ok e dar commit para o github. 
+
+
 Console output Jenkins JOB 3: 
+- Build SUCCESS de recuperacao: #3 - http://localhost:8080/job/tp-integrador-MateusMagalhaes/3/
+- Commit: e8a02fc - test: repor assercao correta
+
 Successfully built 35922b49635a
 Successfully tagged natixis-support:ci-3
 + docker image inspect natixis-support:ci-3 --format {{.Id}}
@@ -203,8 +221,10 @@ sha256:35922b49635a856b8481708e609f1b36c0c9a81cb03313a048fdb3144964776c
 Finished: SUCCESS
 
 A assercao alterada esperava status="offline" mas a API devolve "ok", por isso o pytest falhou e a pipeline parou na etapa Tests, impedindo a construcao de uma imagem com testes a falhar. Depois de repor o assert, o build voltou a SUCCESS.
+O ID da imagem do build 3 e igual ao do build 1 porque o app.py e o Dockerfile nao mudaram entre esses commits (so mudou o teste, que nao entra na imagem) entao o Docker reaproveitou as mesmas camadas.
+Evidencias: evidencias/FAILEDJenkinsJob2.png, evidencias/SUCESSJenkinsJob3.png, evidencias/BuildDos3Jobs.png
 
 
 ## Verificacao final
-[ ] Dockerfile [ ] compose.yaml [ ] app.py [ ] tests/ [ ] Jenkinsfile
-[ ] Historico Git [ ] Tag v1.0.0 [ ] Evidencias E01-E07
+[x] Dockerfile [x] compose.yaml [x] app.py [x] tests/ [x] Jenkinsfile
+[x] Historico Git [x] Tag v1.0.0 [x] Evidencias E01-E07
